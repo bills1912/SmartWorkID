@@ -77,44 +77,47 @@ export default function LandingPage() {
 
   const features = [
     {
+      icon: Sparkles,
+      title: "AI Prompting Search",
+      description: "Ceritakan profil Anda dalam bahasa alami dan AI akan menganalisis serta merekomendasikan pekerjaan terbaik \u2014 bukan sekadar keyword search biasa.",
+      color: "text-accent",
+      bg: "bg-accent/8",
+      isNew: true,
+    },
+    {
       icon: Brain,
-      title: "AI Job Matching",
-      description: "Teknologi kecerdasan buatan yang mencocokkan profil Anda dengan lowongan kerja secara akurat berdasarkan skill, pengalaman, dan preferensi.",
+      title: "Deep AI Match Analysis",
+      description: "Bukan hanya persentase kecocokan. Analisis mendalam 6 dimensi: skill, pengalaman, budaya kerja, gaji, pertumbuhan, dan lokasi \u2014 lengkap dengan AI summary.",
       color: "text-primary",
       bg: "bg-primary/8",
+      isNew: true,
     },
     {
       icon: Target,
-      title: "Skill Gap Advisor",
-      description: "Analisis mendalam terhadap kesenjangan skill Anda dan rekomendasi langkah-langkah yang harus diambil untuk mencapai karir impian.",
-      color: "text-accent",
-      bg: "bg-accent/8",
-    },
-    {
-      icon: GraduationCap,
-      title: "Personalized Training",
-      description: "Program pelatihan yang disesuaikan dengan kebutuhan individu, memastikan setiap jam belajar membawa Anda lebih dekat ke tujuan.",
+      title: "Career Path Analyzer",
+      description: "Peta jalan karir interaktif yang menunjukkan berbagai jalur karir, skill gap per tahap, proyeksi gaji, dan timeline \u2014 seperti skill tree dalam game.",
       color: "text-success",
       bg: "bg-success/8",
+      isNew: true,
     },
     {
       icon: BarChart3,
-      title: "Analitik Kesesuaian",
-      description: "Dashboard analitik real-time untuk melihat kesesuaian antara pekerjaan dan tenaga kerja, dengan insight berbasis data.",
+      title: "Skill Gap Advisor",
+      description: "AI menganalisis kesenjangan skill Anda vs persyaratan pasar dan memberikan rekomendasi pelatihan yang dipersonalisasi untuk menutup gap.",
       color: "text-chart-4",
       bg: "bg-warning/8",
     },
     {
-      icon: Globe2,
-      title: "Matching Antarwilayah",
-      description: "Jangkauan nasional yang menghubungkan pencari kerja dengan peluang di berbagai daerah di seluruh Indonesia.",
+      icon: GraduationCap,
+      title: "Personalized Training",
+      description: "Program pelatihan yang disesuaikan berdasarkan hasil skill gap analysis, memastikan setiap jam belajar relevan dan berdampak pada karir Anda.",
       color: "text-info",
       bg: "bg-info/8",
     },
     {
-      icon: Shield,
-      title: "Verifikasi Perusahaan",
-      description: "Setiap perusahaan terverifikasi untuk memastikan keamanan dan kualitas lowongan kerja bagi para pencari kerja.",
+      icon: Globe2,
+      title: "Matching Antarwilayah",
+      description: "Jangkauan nasional yang menghubungkan pencari kerja dengan peluang di berbagai daerah di seluruh Indonesia, termasuk remote opportunities.",
       color: "text-primary-light",
       bg: "bg-primary/5",
     },
@@ -275,25 +278,31 @@ export default function LandingPage() {
                 variants={fadeUp}
                 className="text-base sm:text-lg text-muted-foreground leading-relaxed max-w-lg mb-8"
               >
-                Platform job matching berbasis kecerdasan artifisial yang
-                menghubungkan talenta terbaik Indonesia dengan peluang karir
-                yang tepat melalui analitik mendalam dan personalized training.
+                Bukan sekadar job board. Ceritakan profil Anda dalam bahasa alami,
+                dan AI kami akan menganalisis, mencocokkan, serta memetakan
+                jalur karir terbaik untuk Anda.
               </motion.p>
 
-              {/* Search Bar */}
-              <motion.div variants={fadeUp} className="flex gap-3 mb-8 max-w-lg">
+              {/* AI Search CTA */}
+              <motion.div variants={fadeUp} className="flex flex-col gap-3 mb-8 max-w-lg">
                 <div className="relative flex-1">
-                  <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                  <Sparkles className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-accent" />
                   <Input
-                    placeholder="Cari pekerjaan impian Anda..."
+                    placeholder="Contoh: Saya lulusan IT, 2 tahun React, cari remote..."
                     className="pl-11 h-12 text-base bg-card border-border/60"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
+                    readOnly
                   />
                 </div>
-                <Button variant="hero" size="lg" asChild>
-                  <Link to="/jobs">Cari</Link>
-                </Button>
+                <div className="flex gap-3">
+                  <Button variant="hero" size="lg" asChild>
+                    <Link to="/ai-search">Coba AI Search <Sparkles className="w-4 h-4" /></Link>
+                  </Button>
+                  <Button variant="heroOutline" size="lg" asChild>
+                    <Link to="/jobs">Jelajahi Lowongan</Link>
+                  </Button>
+                </div>
               </motion.div>
 
               {/* Trust Indicators */}
@@ -383,13 +392,13 @@ export default function LandingPage() {
               variants={fadeUp}
               className="font-heading text-3xl sm:text-4xl font-bold text-foreground mb-4"
             >
-              Digitalisasi Penciptaan Lapangan Kerja
+              Yang Membedakan KerjaAI
             </motion.h2>
             <motion.p
               variants={fadeUp}
               className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto"
             >
-              Solusi terintegrasi berbasis AI untuk menghubungkan talenta dengan peluang kerja di seluruh Indonesia
+              Bukan sekadar job board biasa. KerjaAI menghadirkan AI yang benar-benar memahami profil dan aspirasi karir Anda.
             </motion.p>
           </AnimatedSection>
 
@@ -399,7 +408,14 @@ export default function LandingPage() {
                 const Icon = feature.icon;
                 return (
                   <motion.div key={i} variants={fadeUp}>
-                    <Card className="group h-full flex flex-col border-border/50 hover:border-accent/30 hover:shadow-card-hover transition-all duration-300 cursor-pointer">
+                    <Card className={`group h-full flex flex-col border-border/50 hover:border-accent/30 hover:shadow-card-hover transition-all duration-300 cursor-pointer ${feature.isNew ? "relative overflow-hidden" : ""}`}>
+                      {feature.isNew && (
+                        <div className="absolute top-3 right-3">
+                          <Badge variant="accent" className="text-[10px] px-2 py-0.5 gap-1">
+                            <Zap className="w-2.5 h-2.5" /> Pembeda
+                          </Badge>
+                        </div>
+                      )}
                       <CardHeader className="pb-3">
                         <div className={`w-12 h-12 rounded-xl ${feature.bg} flex items-center justify-center mb-3`}>
                           <Icon className={`w-6 h-6 ${feature.color}`} />
@@ -425,9 +441,78 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ===== HOW IT WORKS ===== */}
+      {/* ===== COMPARISON TABLE ===== */}
       <section className="py-20 sm:py-28 bg-gradient-subtle relative overflow-hidden noise-bg">
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <AnimatedSection className="text-center mb-12">
+            <motion.div variants={fadeUp}>
+              <Badge variant="secondary" className="mb-4">Perbandingan</Badge>
+            </motion.div>
+            <motion.h2
+              variants={fadeUp}
+              className="font-heading text-3xl sm:text-4xl font-bold text-foreground mb-4"
+            >
+              Kenapa KerjaAI Berbeda?
+            </motion.h2>
+            <motion.p
+              variants={fadeUp}
+              className="text-base text-muted-foreground max-w-2xl mx-auto"
+            >
+              Bukan sekadar job board. Bandingkan sendiri fitur yang hanya ada di KerjaAI.
+            </motion.p>
+          </AnimatedSection>
+
+          <AnimatedSection>
+            <motion.div variants={fadeUp}>
+              <Card className="border-border/50 overflow-hidden">
+                <CardContent className="p-0">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b border-border bg-muted/30">
+                          <th className="text-left px-5 py-4 font-heading font-semibold text-foreground">Fitur</th>
+                          <th className="text-center px-5 py-4 font-heading font-semibold text-accent">KerjaAI</th>
+                          <th className="text-center px-5 py-4 font-heading font-semibold text-muted-foreground">JobStreet</th>
+                          <th className="text-center px-5 py-4 font-heading font-semibold text-muted-foreground">Glassdoor</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {[
+                          { feature: "AI Prompting Search (bahasa alami)", kerjaai: true, jobstreet: false, glassdoor: false },
+                          { feature: "Deep AI Match Analysis (6 dimensi)", kerjaai: true, jobstreet: false, glassdoor: false },
+                          { feature: "Career Path Interaktif + Proyeksi Gaji", kerjaai: true, jobstreet: false, glassdoor: false },
+                          { feature: "Skill Gap Analysis + Rekomendasi Training", kerjaai: true, jobstreet: false, glassdoor: false },
+                          { feature: "Pencarian Keyword Biasa", kerjaai: true, jobstreet: true, glassdoor: true },
+                          { feature: "Daftar Lowongan Kerja", kerjaai: true, jobstreet: true, glassdoor: true },
+                          { feature: "Review Perusahaan", kerjaai: false, jobstreet: true, glassdoor: true },
+                          { feature: "Matching Antarwilayah Indonesia", kerjaai: true, jobstreet: false, glassdoor: false },
+                        ].map((row, i) => (
+                          <tr key={i} className="border-b border-border/50 last:border-0">
+                            <td className="px-5 py-3.5 text-foreground">{row.feature}</td>
+                            <td className="px-5 py-3.5 text-center">
+                              {row.kerjaai ? <CheckCircle2 className="w-5 h-5 text-accent mx-auto" /> : <span className="text-muted-foreground">&mdash;</span>}
+                            </td>
+                            <td className="px-5 py-3.5 text-center">
+                              {row.jobstreet ? <CheckCircle2 className="w-5 h-5 text-muted-foreground/40 mx-auto" /> : <span className="text-muted-foreground">&mdash;</span>}
+                            </td>
+                            <td className="px-5 py-3.5 text-center">
+                              {row.glassdoor ? <CheckCircle2 className="w-5 h-5 text-muted-foreground/40 mx-auto" /> : <span className="text-muted-foreground">&mdash;</span>}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          </AnimatedSection>
+        </div>
+      </section>
+
+      {/* ===== HOW IT WORKS ===== */}
+      <section className="py-20 sm:py-28">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <AnimatedSection className="text-center mb-16">
             <motion.div variants={fadeUp}>
               <Badge variant="secondary" className="mb-4">Cara Kerja</Badge>

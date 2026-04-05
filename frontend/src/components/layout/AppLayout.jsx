@@ -19,12 +19,17 @@ import {
   ChevronLeft,
   LogOut,
   Home,
+  Sparkles,
+  GitBranch,
+  Target,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const sidebarLinks = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { label: "AI Job Search", href: "/ai-search", icon: Sparkles },
   { label: "Lowongan Kerja", href: "/jobs", icon: Briefcase },
+  { label: "Career Path", href: "/career-path", icon: GitBranch },
   { label: "Skill Advisor", href: "/skill-advisor", icon: Brain },
   { label: "Pelatihan", href: "/training", icon: GraduationCap },
 ];

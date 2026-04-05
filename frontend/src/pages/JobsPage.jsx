@@ -12,9 +12,10 @@ import { Progress } from "@/components/ui/progress";
 import {
   Search, MapPin, Clock, Building2, DollarSign, Filter,
   Globe2, Heart, ArrowRight, Briefcase, Star, CheckCircle2,
-  Users, Calendar, X, BookmarkPlus,
+  Users, Calendar, X, BookmarkPlus, Brain, Sparkles,
 } from "lucide-react";
 import { toast } from "sonner";
+import { AIMatchDetail } from "@/pages/AIMatchAnalysis";
 
 const allJobs = [
   {
@@ -24,6 +25,7 @@ const allJobs = [
     posted: "2 hari lalu", applicants: 45, region: "jakarta", industry: "tech",
     description: "Kami mencari Senior Frontend Developer yang berpengalaman untuk memimpin pengembangan antarmuka pengguna produk kami.",
     requirements: ["Minimal 5 tahun pengalaman di React", "Pengalaman dengan TypeScript", "Familiar dengan CI/CD", "Kemampuan leadership yang baik"],
+    matchBreakdown: { skill: 97, experience: 94, culture: 96, salary: 95, growth: 98 },
   },
   {
     id: 2, title: "Data Scientist", company: "Gojek", location: "Jakarta",
@@ -32,6 +34,7 @@ const allJobs = [
     posted: "3 hari lalu", applicants: 62, region: "jakarta", industry: "tech",
     description: "Bergabunglah dengan tim data science kami untuk mengembangkan model machine learning yang berdampak.",
     requirements: ["Master degree di bidang terkait", "3+ tahun pengalaman ML", "Expert di Python dan SQL", "Pengalaman dengan cloud platform"],
+    matchBreakdown: { skill: 90, experience: 85, culture: 88, salary: 90, growth: 87 },
   },
   {
     id: 3, title: "Product Manager", company: "Bukalapak", location: "Bandung",
@@ -40,6 +43,7 @@ const allJobs = [
     posted: "1 hari lalu", applicants: 38, region: "bandung", industry: "tech",
     description: "Kami mencari Product Manager yang berpengalaman untuk memimpin pengembangan fitur baru.",
     requirements: ["3+ tahun pengalaman PM", "Pemahaman Agile/Scrum", "Kemampuan analitis yang kuat", "Komunikasi yang baik"],
+    matchBreakdown: { skill: 80, experience: 78, culture: 85, salary: 84, growth: 86 },
   },
   {
     id: 4, title: "UI/UX Designer", company: "Traveloka", location: "Jakarta",
@@ -48,6 +52,7 @@ const allJobs = [
     posted: "5 hari lalu", applicants: 71, region: "jakarta", industry: "tech",
     description: "Posisi untuk designer yang passionate dalam menciptakan pengalaman pengguna yang luar biasa.",
     requirements: ["Portfolio yang kuat", "3+ tahun pengalaman UX", "Expert di Figma", "Pemahaman design thinking"],
+    matchBreakdown: { skill: 92, experience: 88, culture: 94, salary: 90, growth: 91 },
   },
   {
     id: 5, title: "DevOps Engineer", company: "OVO", location: "Surabaya",
@@ -56,6 +61,7 @@ const allJobs = [
     posted: "1 minggu lalu", applicants: 28, region: "surabaya", industry: "fintech",
     description: "Bergabunglah untuk mengelola infrastruktur cloud kami yang melayani jutaan pengguna.",
     requirements: ["4+ tahun pengalaman DevOps", "AWS/GCP certified", "Expert Docker & K8s", "Scripting (Bash/Python)"],
+    matchBreakdown: { skill: 76, experience: 80, culture: 82, salary: 78, growth: 80 },
   },
   {
     id: 6, title: "Marketing Analyst", company: "Shopee", location: "Jakarta",
@@ -64,6 +70,7 @@ const allJobs = [
     posted: "4 hari lalu", applicants: 89, region: "jakarta", industry: "ecommerce",
     description: "Kami mencari Marketing Analyst yang data-driven untuk mengoptimalkan kampanye marketing.",
     requirements: ["2+ tahun pengalaman marketing analytics", "Expert Google Analytics", "SQL proficiency", "Strong communication"],
+    matchBreakdown: { skill: 72, experience: 74, culture: 78, salary: 76, growth: 75 },
   },
   {
     id: 7, title: "Mobile Developer (Flutter)", company: "Dana", location: "Yogyakarta",
@@ -72,6 +79,7 @@ const allJobs = [
     posted: "2 hari lalu", applicants: 34, region: "yogyakarta", industry: "fintech",
     description: "Kembangkan aplikasi mobile fintech yang digunakan oleh jutaan pengguna Indonesia.",
     requirements: ["3+ tahun Flutter development", "Published apps di store", "Pemahaman state management", "Testing experience"],
+    matchBreakdown: { skill: 88, experience: 84, culture: 86, salary: 85, growth: 88 },
   },
   {
     id: 8, title: "Backend Engineer (Go)", company: "Xendit", location: "Jakarta",
@@ -80,6 +88,7 @@ const allJobs = [
     posted: "6 hari lalu", applicants: 41, region: "jakarta", industry: "fintech",
     description: "Bangun sistem payment infrastructure yang reliable dan scalable.",
     requirements: ["4+ tahun Go development", "Microservices architecture", "Database optimization", "System design skills"],
+    matchBreakdown: { skill: 82, experience: 84, culture: 86, salary: 85, growth: 83 },
   },
 ];
 
@@ -91,6 +100,7 @@ export default function JobsPage() {
   const [selectedJob, setSelectedJob] = useState(null);
   const [savedJobs, setSavedJobs] = useState([]);
   const [appliedJobs, setAppliedJobs] = useState([]);
+  const [dialogTab, setDialogTab] = useState("info");
 
   const filteredJobs = useMemo(() => {
     let jobs = [...allJobs];
@@ -279,67 +289,78 @@ export default function JobsPage() {
       )}
 
       {/* Job Detail Dialog */}
-      <Dialog open={!!selectedJob} onOpenChange={() => setSelectedJob(null)}>
-        <DialogContent className="sm:max-w-[600px] max-h-[85vh] overflow-y-auto">
+      <Dialog open={!!selectedJob} onOpenChange={() => { setSelectedJob(null); setDialogTab("info"); }}>
+        <DialogContent className="sm:max-w-[650px] max-h-[85vh] overflow-y-auto">
           {selectedJob && (
             <>
-              <DialogHeader>
-                <div className="flex items-start justify-between">
-                  <div>
-                    <DialogTitle className="font-heading text-xl">
-                      {selectedJob.title}
-                    </DialogTitle>
-                    <DialogDescription className="flex items-center gap-2 mt-1">
-                      <Building2 className="w-4 h-4" />
-                      {selectedJob.company} &bull; {selectedJob.location}
-                    </DialogDescription>
+              <Tabs value={dialogTab} onValueChange={setDialogTab}>
+                <TabsList className="w-full">
+                  <TabsTrigger value="info" className="flex-1 gap-1.5">
+                    <Briefcase className="w-3.5 h-3.5" /> Detail Lowongan
+                  </TabsTrigger>
+                  <TabsTrigger value="ai-analysis" className="flex-1 gap-1.5">
+                    <Brain className="w-3.5 h-3.5" /> Analisis AI
+                  </TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="info" className="mt-4">
+                  <div className="space-y-5">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <h3 className="font-heading text-xl font-semibold text-foreground">{selectedJob.title}</h3>
+                        <p className="text-sm text-muted-foreground flex items-center gap-2 mt-1">
+                          <Building2 className="w-4 h-4" />
+                          {selectedJob.company} &bull; {selectedJob.location}
+                        </p>
+                      </div>
+                      <Badge variant="success" className="text-sm">{selectedJob.match}% Match</Badge>
+                    </div>
+
+                    <div className="flex flex-wrap gap-3 text-sm text-muted-foreground">
+                      <Badge variant="secondary">{selectedJob.type}</Badge>
+                      <Badge variant="secondary">{selectedJob.mode}</Badge>
+                      <Badge variant="secondary">{selectedJob.salary}</Badge>
+                    </div>
+
+                    <div>
+                      <h4 className="font-heading text-sm font-semibold text-foreground mb-2">Deskripsi</h4>
+                      <p className="text-sm text-muted-foreground leading-relaxed">{selectedJob.description}</p>
+                    </div>
+
+                    <div>
+                      <h4 className="font-heading text-sm font-semibold text-foreground mb-2">Persyaratan</h4>
+                      <ul className="space-y-2">
+                        {selectedJob.requirements.map((req, i) => (
+                          <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
+                            <CheckCircle2 className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
+                            {req}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <div>
+                      <h4 className="font-heading text-sm font-semibold text-foreground mb-2">Skill</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {selectedJob.skills.map((skill) => (
+                          <Badge key={skill} variant="accent" className="text-xs">{skill}</Badge>
+                        ))}
+                      </div>
+                    </div>
+
+                    <Separator />
+
+                    <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                      <span className="flex items-center gap-1"><Users className="w-3.5 h-3.5" /> {selectedJob.applicants} pelamar</span>
+                      <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5" /> {selectedJob.posted}</span>
+                    </div>
                   </div>
-                  <Badge variant="success" className="text-sm">
-                    {selectedJob.match}% Match
-                  </Badge>
-                </div>
-              </DialogHeader>
+                </TabsContent>
 
-              <div className="space-y-5 mt-4">
-                <div className="flex flex-wrap gap-3 text-sm text-muted-foreground">
-                  <Badge variant="secondary">{selectedJob.type}</Badge>
-                  <Badge variant="secondary">{selectedJob.mode}</Badge>
-                  <Badge variant="secondary">{selectedJob.salary}</Badge>
-                </div>
-
-                <div>
-                  <h4 className="font-heading text-sm font-semibold text-foreground mb-2">Deskripsi</h4>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{selectedJob.description}</p>
-                </div>
-
-                <div>
-                  <h4 className="font-heading text-sm font-semibold text-foreground mb-2">Persyaratan</h4>
-                  <ul className="space-y-2">
-                    {selectedJob.requirements.map((req, i) => (
-                      <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
-                        <CheckCircle2 className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
-                        {req}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                <div>
-                  <h4 className="font-heading text-sm font-semibold text-foreground mb-2">Skill</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {selectedJob.skills.map((skill) => (
-                      <Badge key={skill} variant="accent" className="text-xs">{skill}</Badge>
-                    ))}
-                  </div>
-                </div>
-
-                <Separator />
-
-                <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                  <span className="flex items-center gap-1"><Users className="w-3.5 h-3.5" /> {selectedJob.applicants} pelamar</span>
-                  <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5" /> {selectedJob.posted}</span>
-                </div>
-              </div>
+                <TabsContent value="ai-analysis" className="mt-4">
+                  <AIMatchDetail job={selectedJob} />
+                </TabsContent>
+              </Tabs>
 
               <DialogFooter className="mt-4 gap-2">
                 <Button

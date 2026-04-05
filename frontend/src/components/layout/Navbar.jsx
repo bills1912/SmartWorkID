@@ -8,9 +8,9 @@ import { cn } from "@/lib/utils";
 
 const navLinks = [
   { label: "Beranda", href: "/" },
+  { label: "AI Search", href: "/ai-search" },
   { label: "Lowongan", href: "/jobs" },
-  { label: "Skill Advisor", href: "/skill-advisor" },
-  { label: "Pelatihan", href: "/training" },
+  { label: "Career Path", href: "/career-path" },
   { label: "Dashboard", href: "/dashboard" },
 ];
 
