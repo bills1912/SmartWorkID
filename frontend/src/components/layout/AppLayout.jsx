@@ -10,20 +10,18 @@ import {
   Briefcase,
   Brain,
   GraduationCap,
-  BarChart3,
-  Settings,
   User,
   Menu,
   Bell,
-  Search,
   ChevronLeft,
-  LogOut,
   Home,
   Sparkles,
   GitBranch,
-  Target,
+  Sun,
+  Moon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useDarkMode } from "@/hooks/use-dark-mode";
 
 const sidebarLinks = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -38,6 +36,7 @@ export const AppLayout = ({ children, title, subtitle }) => {
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { isDark, toggle: toggleDark } = useDarkMode();
 
   const SidebarContent = ({ isMobile = false }) => (
     <div className="flex flex-col h-full">
@@ -154,6 +153,9 @@ export const AppLayout = ({ children, title, subtitle }) => {
 
           {/* Actions */}
           <div className="flex items-center gap-2">
+            <Button variant="ghost" size="icon" onClick={toggleDark} title={isDark ? "Mode Terang" : "Mode Gelap"}>
+              {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            </Button>
             <Button variant="ghost" size="icon" className="relative">
               <Bell className="w-5 h-5" />
               <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-accent" />

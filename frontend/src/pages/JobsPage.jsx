@@ -195,14 +195,22 @@ export default function JobsPage() {
           </Select>
         </div>
 
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <span className="font-medium text-foreground">{filteredJobs.length}</span> lowongan ditemukan
-          {regionFilter !== "all" && (
-            <Badge variant="secondary" className="gap-1">
-              {regionFilter}
-              <button onClick={() => setRegionFilter("all")}>
-                <X className="w-3 h-3" />
-              </button>
+        <div className="flex items-center justify-between gap-2 text-sm text-muted-foreground">
+          <div className="flex items-center gap-2">
+            <span className="font-medium text-foreground">{filteredJobs.length}</span> lowongan ditemukan
+            {regionFilter !== "all" && (
+              <Badge variant="secondary" className="gap-1">
+                {regionFilter}
+                <button onClick={() => setRegionFilter("all")}>
+                  <X className="w-3 h-3" />
+                </button>
+              </Badge>
+            )}
+          </div>
+          {savedJobs.length > 0 && (
+            <Badge variant="accent" className="gap-1.5">
+              <BookmarkPlus className="w-3 h-3" />
+              {savedJobs.length} Tersimpan
             </Badge>
           )}
         </div>

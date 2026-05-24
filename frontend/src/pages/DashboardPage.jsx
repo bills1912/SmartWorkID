@@ -8,7 +8,8 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
   Briefcase, TrendingUp, Users, Brain, GraduationCap,
   BarChart3, Target, ArrowUpRight, ArrowDownRight, Clock,
-  MapPin, Building2, CheckCircle2, Sparkles,
+  MapPin, Building2, CheckCircle2, Sparkles, CalendarDays,
+  FileText, Star, Zap,
 } from "lucide-react";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
@@ -317,6 +318,87 @@ export default function DashboardPage() {
                   </div>
                 </div>
               ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Weekly Goals + Recent Activity */}
+      <div className="grid lg:grid-cols-2 gap-6 mt-6">
+        {/* Weekly Goals */}
+        <Card className="border-border/50">
+          <CardHeader className="pb-2">
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-base font-heading flex items-center gap-2">
+                  <CalendarDays className="w-4 h-4 text-accent" />
+                  Target Minggu Ini
+                </CardTitle>
+                <CardDescription>Progres menuju tujuan karir mingguan Anda</CardDescription>
+              </div>
+              <Badge variant="accent" className="text-xs">Minggu ke-21</Badge>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {[
+              { label: "Lamaran Dikirim", current: 6, target: 10, icon: FileText, color: "text-primary" },
+              { label: "Lowongan Ditinjau", current: 23, target: 30, icon: Briefcase, color: "text-accent" },
+              { label: "Skill Ditingkatkan", current: 2, target: 3, icon: Brain, color: "text-success" },
+              { label: "Kursus Diselesaikan", current: 1, target: 2, icon: GraduationCap, color: "text-chart-4" },
+            ].map((goal) => {
+              const Icon = goal.icon;
+              const pct = Math.round((goal.current / goal.target) * 100);
+              return (
+                <div key={goal.label}>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <div className="flex items-center gap-2 text-sm">
+                      <Icon className={`w-4 h-4 ${goal.color}`} />
+                      <span className="font-medium text-foreground">{goal.label}</span>
+                    </div>
+                    <span className="text-xs text-muted-foreground">{goal.current}/{goal.target}</span>
+                  </div>
+                  <Progress value={pct} className="h-1.5" />
+                </div>
+              );
+            })}
+          </CardContent>
+        </Card>
+
+        {/* Recent Activity */}
+        <Card className="border-border/50">
+          <CardHeader className="pb-2">
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-base font-heading flex items-center gap-2">
+                  <Zap className="w-4 h-4 text-accent" />
+                  Aktivitas Terbaru
+                </CardTitle>
+                <CardDescription>Riwayat aktivitas akun Anda</CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {[
+                { text: "Lamaran dikirim ke Tokopedia — Senior Frontend Dev", time: "2 jam lalu", color: "bg-accent/10", icon: Briefcase, iconColor: "text-accent" },
+                { text: "AI match baru: 96% untuk React Developer di Gojek", time: "5 jam lalu", color: "bg-primary/10", icon: Sparkles, iconColor: "text-primary" },
+                { text: "Kursus TypeScript diselesaikan — +10 skill points", time: "Kemarin", color: "bg-success/10", icon: CheckCircle2, iconColor: "text-success" },
+                { text: "Profil diperbarui — skor profil naik ke 87%", time: "2 hari lalu", color: "bg-chart-4/10", icon: Star, iconColor: "text-chart-4" },
+                { text: "Diundang interview oleh Traveloka", time: "3 hari lalu", color: "bg-success/10", icon: Users, iconColor: "text-success" },
+              ].map((act, i) => {
+                const Icon = act.icon;
+                return (
+                  <div key={i} className="flex items-start gap-3">
+                    <div className={`w-8 h-8 rounded-lg ${act.color} flex items-center justify-center flex-shrink-0 mt-0.5`}>
+                      <Icon className={`w-4 h-4 ${act.iconColor}`} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs text-foreground leading-relaxed">{act.text}</p>
+                      <p className="text-[10px] text-muted-foreground mt-0.5">{act.time}</p>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </CardContent>
         </Card>
