@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -10,7 +11,7 @@ import { Progress } from "@/components/ui/progress";
 import {
   Send, Sparkles, User, Brain, MapPin, Building2, Clock,
   TrendingUp, CheckCircle2, ArrowRight, Target, Briefcase,
-  Lightbulb, RefreshCw, Star, DollarSign, Zap, Heart,
+  Lightbulb, RefreshCw, Star, DollarSign, Zap, Heart, Trash2,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
@@ -102,18 +103,38 @@ const MatchRadial = ({ value, size = 56 }) => {
 };
 
 export default function AISearchPage() {
+  const location = useLocation();
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [expandedJob, setExpandedJob] = useState(null);
   const scrollRef = useRef(null);
   const inputRef = useRef(null);
+  const initialQuerySent = useRef(false);
 
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages, isTyping]);
+
+  useEffect(() => {
+    const initialQuery = location.state?.initialQuery;
+    if (initialQuery && !initialQuerySent.current) {
+      initialQuerySent.current = true;
+      setMessages([{ role: "user", type: "text", content: initialQuery }]);
+      simulateAIResponse(initialQuery);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleReset = () => {
+    setMessages([]);
+    setInput("");
+    setIsTyping(false);
+    setExpandedJob(null);
+    initialQuerySent.current = false;
+  };
 
   const simulateAIResponse = (userMessage) => {
     setIsTyping(true);
@@ -230,6 +251,21 @@ export default function AISearchPage() {
   return (
     <AppLayout title="AI Job Search" subtitle="Ceritakan profil dan keinginan Anda, AI akan mencarikan pekerjaan terbaik">
       <div className="flex flex-col h-[calc(100vh-10rem)]">
+        {/* Header actions */}
+        {messages.length > 0 && (
+          <div className="flex justify-end mb-3">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="gap-1.5 text-muted-foreground hover:text-destructive"
+              onClick={handleReset}
+              disabled={isTyping}
+            >
+              <Trash2 className="w-4 h-4" />
+              Percakapan Baru
+            </Button>
+          </div>
+        )}
         {/* Chat Area */}
         <div ref={scrollRef} className="flex-1 overflow-y-auto space-y-4 pb-4 pr-2">
           {/* Welcome */}

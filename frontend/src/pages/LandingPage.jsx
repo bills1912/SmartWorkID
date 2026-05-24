@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion, useInView } from "framer-motion";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
@@ -74,6 +74,15 @@ const Counter = ({ target, suffix = "" }) => {
 /* ============ LANDING PAGE ============ */
 export default function LandingPage() {
   const [searchQuery, setSearchQuery] = useState("");
+  const navigate = useNavigate();
+
+  const handleHeroSearch = () => {
+    if (!searchQuery.trim()) {
+      navigate("/ai-search");
+      return;
+    }
+    navigate("/ai-search", { state: { initialQuery: searchQuery.trim() } });
+  };
 
   const features = [
     {
@@ -292,12 +301,12 @@ export default function LandingPage() {
                     className="pl-11 h-12 text-base bg-card border-border/60"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    readOnly
+                    onKeyDown={(e) => e.key === "Enter" && handleHeroSearch()}
                   />
                 </div>
                 <div className="flex gap-3">
-                  <Button variant="hero" size="lg" asChild>
-                    <Link to="/ai-search">Coba AI Search <Sparkles className="w-4 h-4" /></Link>
+                  <Button variant="hero" size="lg" onClick={handleHeroSearch}>
+                    Coba AI Search <Sparkles className="w-4 h-4" />
                   </Button>
                   <Button variant="heroOutline" size="lg" asChild>
                     <Link to="/jobs">Jelajahi Lowongan</Link>

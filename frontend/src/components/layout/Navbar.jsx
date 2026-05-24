@@ -3,14 +3,17 @@ import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, X, Briefcase, Brain, ChevronDown } from "lucide-react";
+import { Menu, Briefcase, Sun, Moon, Brain, GraduationCap, GitBranch, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useDarkMode } from "@/hooks/use-dark-mode";
 
 const navLinks = [
   { label: "Beranda", href: "/" },
   { label: "AI Search", href: "/ai-search" },
   { label: "Lowongan", href: "/jobs" },
   { label: "Career Path", href: "/career-path" },
+  { label: "Skill Advisor", href: "/skill-advisor" },
+  { label: "Pelatihan", href: "/training" },
   { label: "Dashboard", href: "/dashboard" },
 ];
 
@@ -18,6 +21,7 @@ export const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
+  const { isDark, toggle: toggleDark } = useDarkMode();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -73,6 +77,9 @@ export const Navbar = () => {
 
           {/* Desktop CTA */}
           <div className="hidden lg:flex items-center gap-3">
+            <Button variant="ghost" size="icon" onClick={toggleDark} title={isDark ? "Mode Terang" : "Mode Gelap"}>
+              {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            </Button>
             <Button variant="ghost" size="sm">
               Masuk
             </Button>
@@ -106,6 +113,10 @@ export const Navbar = () => {
                   </Link>
                 ))}
                 <div className="border-t border-border mt-4 pt-4 flex flex-col gap-2">
+                  <Button variant="outline" className="w-full gap-2" onClick={toggleDark}>
+                    {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                    {isDark ? "Mode Terang" : "Mode Gelap"}
+                  </Button>
                   <Button variant="outline" className="w-full">
                     Masuk
                   </Button>
