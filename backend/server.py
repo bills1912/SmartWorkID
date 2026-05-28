@@ -256,38 +256,33 @@ app.add_middleware(
 
 @app.on_event("startup")
 async def startup_db():
-    count = await db.jobs.count_documents({})
-    if count == 0:
-        logger.info("Database kosong — menjalankan seed otomatis...")
-        try:
-            from seed import (
-                JOBS, COURSES, CAREER_PATHS, SKILL_PROFILES,
-                REGION_STATS, INDUSTRY_STATS, DASHBOARD_STATS,
-            )
-            collections = {
-                "jobs": JOBS, "courses": COURSES,
-                "career_paths": CAREER_PATHS, "skill_profiles": SKILL_PROFILES,
-                "region_stats": REGION_STATS, "industry_stats": INDUSTRY_STATS,
-            }
-            for col_name, data in collections.items():
-                if data:
-                    await db[col_name].insert_many(data)
-            await db.stats.update_one(
-                {"type": "dashboard"}, {"$set": DASHBOARD_STATS}, upsert=True
-            )
-            await db.jobs.create_index([("id", 1)], unique=True)
-            await db.jobs.create_index([("region", 1), ("match", -1)])
-            await db.jobs.create_index([("title", "text"), ("company", "text")])
-            await db.courses.create_index([("id", 1)], unique=True)
-            await db.courses.create_index([("category", 1), ("rating", -1)])
-            await db.career_paths.create_index([("id", 1)], unique=True)
-            await db.skill_profiles.create_index([("id", 1)], unique=True)
-            await db.applications.create_index(
-                [("job_id", 1), ("user_email", 1)], unique=True
-            )
-            logger.info("Seed otomatis selesai.")
-        except Exception as e:
-            logger.error(f"Seed otomatis gagal: {e}")
+    try:
+        from seed import (
+            JOBS, COURSES, CAREER_PATHS, SKILL_PROFILES,
+            REGION_STATS, INDUSTRY_STATS, DASHBOARD_STATS,
+        )
+        collections = {
+            "jobs": JOBS, "courses": COURSES,
+            "career_paths": CAREER_PATHS, "skill_profiles": SKILL_PROFILES,
+            "region_stats": REGION_STATS, "industry_stats": INDUSTRY_STATS,
+        }
+        for col_name, data in collections.items():
+            if data and await db[col_name].count_documents({}) == 0:
+                await db[col_name].insert_many(data)
+                logger.info(f"Seeded {col_name}: {len(data)} dokumen")
+        await db.stats.update_one(
+            {"type": "dashboard"}, {"$set": DASHBOARD_STATS}, upsert=True
+        )
+        await db.jobs.create_index([("id", 1)], unique=True)
+        await db.courses.create_index([("id", 1)], unique=True)
+        await db.courses.create_index([("category", 1), ("rating", -1)])
+        await db.career_paths.create_index([("id", 1)], unique=True)
+        await db.skill_profiles.create_index([("id", 1)], unique=True)
+        await db.applications.create_index(
+            [("job_id", 1), ("user_email", 1)], unique=True
+        )
+    except Exception as e:
+        logger.error(f"Startup seed error: {e}")
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
