@@ -3,20 +3,16 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Copy package files
-COPY package.json yarn.lock* package-lock.json* ./
+COPY package.json yarn.lock* ./
 
-# Install dependencies (skip optional packages that can't be fetched)
 RUN yarn install --network-timeout 600000
 
-# Copy source
 COPY . .
 
-# Build the app
 ARG REACT_APP_API_URL
 ENV REACT_APP_API_URL=$REACT_APP_API_URL
 
-RUN yarn build || npm run build
+RUN yarn build
 
 # Stage 2: Serve with nginx
 FROM nginx:1.27-alpine
