@@ -274,6 +274,8 @@ async def startup_db():
             {"type": "dashboard"}, {"$set": DASHBOARD_STATS}, upsert=True
         )
         await db.jobs.create_index([("id", 1)], unique=True)
+        await db.jobs.create_index([("region", 1), ("match", -1)])
+        await db.jobs.create_index([("title", "text"), ("company", "text")])
         await db.courses.create_index([("id", 1)], unique=True)
         await db.courses.create_index([("category", 1), ("rating", -1)])
         await db.career_paths.create_index([("id", 1)], unique=True)
@@ -283,6 +285,7 @@ async def startup_db():
         )
     except Exception as e:
         logger.error(f"Startup seed error: {e}")
+
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
