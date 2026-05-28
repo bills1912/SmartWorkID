@@ -7,7 +7,7 @@ WORKDIR /app
 COPY package.json yarn.lock* package-lock.json* ./
 
 # Install dependencies (skip optional packages that can't be fetched)
-RUN yarn install --frozen-lockfile --network-timeout 600000 || npm ci
+RUN yarn install --network-timeout 600000
 
 # Copy source
 COPY . .
