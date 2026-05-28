@@ -21,14 +21,13 @@ RUN yarn build || npm run build
 # Stage 2: Serve with nginx
 FROM nginx:1.27-alpine
 
-# Remove default nginx config
 RUN rm /etc/nginx/conf.d/default.conf
 
-# Copy custom nginx config
-COPY nginx.conf /etc/nginx/conf.d/app.conf
+COPY nginx.conf /etc/nginx/conf.d/app.conf.template
 
-# Copy built files from builder stage
 COPY --from=builder /app/build /usr/share/nginx/html
+
+CMD ["/bin/sh", "-c", "envsubst '${PORT}' < /etc/nginx/conf.d/app.conf.template > /etc/nginx/conf.d/app.conf && nginx -g 'daemon off;'"]
 
 EXPOSE 80
 
