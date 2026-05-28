@@ -268,7 +268,7 @@ export default function TrainingPage() {
           </Card>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {courses.slice(0, 3).map((course) => (
+            {allCourses.slice(0, 3).map((course) => (
               <Card key={course.id} className="group h-full flex flex-col border-accent/20 hover:shadow-card-hover transition-all duration-300 overflow-hidden">
                 <div className="relative h-40 overflow-hidden">
                   <img
