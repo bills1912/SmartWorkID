@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -17,6 +17,7 @@ import {
   RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar,
   AreaChart, Area,
 } from "recharts";
+import { api } from "@/lib/api";
 
 const matchData = [
   { month: "Jan", matches: 120, applied: 45 },
@@ -81,11 +82,16 @@ const statusLabels = {
 
 export default function DashboardPage() {
   const [period, setPeriod] = useState("6m");
+  const [dashStats, setDashStats] = useState(null);
+
+  useEffect(() => {
+    api.stats.dashboard().then(setDashStats).catch(() => {});
+  }, []);
 
   const stats = [
     {
       label: "Total Match",
-      value: "1,690",
+      value: dashStats ? dashStats.totalMatches?.toLocaleString("id-ID") : "1.690",
       change: "+18.2%",
       trend: "up",
       icon: Brain,
@@ -94,7 +100,7 @@ export default function DashboardPage() {
     },
     {
       label: "Dilamar",
-      value: "636",
+      value: dashStats ? dashStats.applied?.toLocaleString("id-ID") : "636",
       change: "+12.5%",
       trend: "up",
       icon: Briefcase,
@@ -103,7 +109,7 @@ export default function DashboardPage() {
     },
     {
       label: "Interview",
-      value: "24",
+      value: dashStats ? String(dashStats.interviews) : "24",
       change: "+8.3%",
       trend: "up",
       icon: Users,
@@ -112,7 +118,7 @@ export default function DashboardPage() {
     },
     {
       label: "Skill Score",
-      value: "78%",
+      value: dashStats ? `${dashStats.skillScore}%` : "78%",
       change: "+5.1%",
       trend: "up",
       icon: Target,

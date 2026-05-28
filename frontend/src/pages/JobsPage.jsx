@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -16,81 +16,8 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { AIMatchDetail } from "@/pages/AIMatchAnalysis";
+import { api } from "@/lib/api";
 
-const allJobs = [
-  {
-    id: 1, title: "Senior Frontend Developer", company: "Tokopedia", location: "Jakarta",
-    type: "Full-time", mode: "Hybrid", salary: "Rp 20-35 Jt", match: 96,
-    skills: ["React", "TypeScript", "Next.js", "Tailwind CSS"],
-    posted: "2 hari lalu", applicants: 45, region: "jakarta", industry: "tech",
-    description: "Kami mencari Senior Frontend Developer yang berpengalaman untuk memimpin pengembangan antarmuka pengguna produk kami.",
-    requirements: ["Minimal 5 tahun pengalaman di React", "Pengalaman dengan TypeScript", "Familiar dengan CI/CD", "Kemampuan leadership yang baik"],
-    matchBreakdown: { skill: 97, experience: 94, culture: 96, salary: 95, growth: 98 },
-  },
-  {
-    id: 2, title: "Data Scientist", company: "Gojek", location: "Jakarta",
-    type: "Full-time", mode: "On-site", salary: "Rp 25-40 Jt", match: 88,
-    skills: ["Python", "TensorFlow", "SQL", "Statistics"],
-    posted: "3 hari lalu", applicants: 62, region: "jakarta", industry: "tech",
-    description: "Bergabunglah dengan tim data science kami untuk mengembangkan model machine learning yang berdampak.",
-    requirements: ["Master degree di bidang terkait", "3+ tahun pengalaman ML", "Expert di Python dan SQL", "Pengalaman dengan cloud platform"],
-    matchBreakdown: { skill: 90, experience: 85, culture: 88, salary: 90, growth: 87 },
-  },
-  {
-    id: 3, title: "Product Manager", company: "Bukalapak", location: "Bandung",
-    type: "Full-time", mode: "Hybrid", salary: "Rp 18-30 Jt", match: 82,
-    skills: ["Agile", "Analytics", "Strategy", "SQL"],
-    posted: "1 hari lalu", applicants: 38, region: "bandung", industry: "tech",
-    description: "Kami mencari Product Manager yang berpengalaman untuk memimpin pengembangan fitur baru.",
-    requirements: ["3+ tahun pengalaman PM", "Pemahaman Agile/Scrum", "Kemampuan analitis yang kuat", "Komunikasi yang baik"],
-    matchBreakdown: { skill: 80, experience: 78, culture: 85, salary: 84, growth: 86 },
-  },
-  {
-    id: 4, title: "UI/UX Designer", company: "Traveloka", location: "Jakarta",
-    type: "Full-time", mode: "Remote", salary: "Rp 15-25 Jt", match: 91,
-    skills: ["Figma", "Design System", "User Research", "Prototyping"],
-    posted: "5 hari lalu", applicants: 71, region: "jakarta", industry: "tech",
-    description: "Posisi untuk designer yang passionate dalam menciptakan pengalaman pengguna yang luar biasa.",
-    requirements: ["Portfolio yang kuat", "3+ tahun pengalaman UX", "Expert di Figma", "Pemahaman design thinking"],
-    matchBreakdown: { skill: 92, experience: 88, culture: 94, salary: 90, growth: 91 },
-  },
-  {
-    id: 5, title: "DevOps Engineer", company: "OVO", location: "Surabaya",
-    type: "Full-time", mode: "On-site", salary: "Rp 20-32 Jt", match: 79,
-    skills: ["AWS", "Docker", "Kubernetes", "Terraform"],
-    posted: "1 minggu lalu", applicants: 28, region: "surabaya", industry: "fintech",
-    description: "Bergabunglah untuk mengelola infrastruktur cloud kami yang melayani jutaan pengguna.",
-    requirements: ["4+ tahun pengalaman DevOps", "AWS/GCP certified", "Expert Docker & K8s", "Scripting (Bash/Python)"],
-    matchBreakdown: { skill: 76, experience: 80, culture: 82, salary: 78, growth: 80 },
-  },
-  {
-    id: 6, title: "Marketing Analyst", company: "Shopee", location: "Jakarta",
-    type: "Full-time", mode: "Hybrid", salary: "Rp 12-18 Jt", match: 75,
-    skills: ["Google Analytics", "SQL", "Excel", "Marketing Strategy"],
-    posted: "4 hari lalu", applicants: 89, region: "jakarta", industry: "ecommerce",
-    description: "Kami mencari Marketing Analyst yang data-driven untuk mengoptimalkan kampanye marketing.",
-    requirements: ["2+ tahun pengalaman marketing analytics", "Expert Google Analytics", "SQL proficiency", "Strong communication"],
-    matchBreakdown: { skill: 72, experience: 74, culture: 78, salary: 76, growth: 75 },
-  },
-  {
-    id: 7, title: "Mobile Developer (Flutter)", company: "Dana", location: "Yogyakarta",
-    type: "Full-time", mode: "Remote", salary: "Rp 15-25 Jt", match: 86,
-    skills: ["Flutter", "Dart", "Firebase", "REST API"],
-    posted: "2 hari lalu", applicants: 34, region: "yogyakarta", industry: "fintech",
-    description: "Kembangkan aplikasi mobile fintech yang digunakan oleh jutaan pengguna Indonesia.",
-    requirements: ["3+ tahun Flutter development", "Published apps di store", "Pemahaman state management", "Testing experience"],
-    matchBreakdown: { skill: 88, experience: 84, culture: 86, salary: 85, growth: 88 },
-  },
-  {
-    id: 8, title: "Backend Engineer (Go)", company: "Xendit", location: "Jakarta",
-    type: "Full-time", mode: "Hybrid", salary: "Rp 22-38 Jt", match: 84,
-    skills: ["Go", "PostgreSQL", "gRPC", "Microservices"],
-    posted: "6 hari lalu", applicants: 41, region: "jakarta", industry: "fintech",
-    description: "Bangun sistem payment infrastructure yang reliable dan scalable.",
-    requirements: ["4+ tahun Go development", "Microservices architecture", "Database optimization", "System design skills"],
-    matchBreakdown: { skill: 82, experience: 84, culture: 86, salary: 85, growth: 83 },
-  },
-];
 
 export default function JobsPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -101,29 +28,30 @@ export default function JobsPage() {
   const [savedJobs, setSavedJobs] = useState([]);
   const [appliedJobs, setAppliedJobs] = useState([]);
   const [dialogTab, setDialogTab] = useState("info");
+  const [jobs, setJobs] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const filteredJobs = useMemo(() => {
-    let jobs = [...allJobs];
-    if (searchQuery) {
-      const q = searchQuery.toLowerCase();
-      jobs = jobs.filter(
-        (j) =>
-          j.title.toLowerCase().includes(q) ||
-          j.company.toLowerCase().includes(q) ||
-          j.skills.some((s) => s.toLowerCase().includes(q))
-      );
+  const fetchJobs = useCallback(async () => {
+    setLoading(true);
+    try {
+      const data = await api.jobs.list({
+        search: searchQuery || undefined,
+        region: regionFilter !== "all" ? regionFilter : undefined,
+        mode: typeFilter !== "all" ? typeFilter : undefined,
+        sort_by: sortBy,
+      });
+      setJobs(data);
+    } catch {
+      setJobs([]);
+    } finally {
+      setLoading(false);
     }
-    if (regionFilter !== "all") {
-      jobs = jobs.filter((j) => j.region === regionFilter);
-    }
-    if (typeFilter !== "all") {
-      jobs = jobs.filter((j) => j.mode.toLowerCase() === typeFilter);
-    }
-    if (sortBy === "match") jobs.sort((a, b) => b.match - a.match);
-    if (sortBy === "newest") jobs.sort((a, b) => a.id - b.id);
-    if (sortBy === "salary") jobs.sort((a, b) => b.match - a.match);
-    return jobs;
   }, [searchQuery, regionFilter, typeFilter, sortBy]);
+
+  useEffect(() => {
+    const timer = setTimeout(fetchJobs, 300);
+    return () => clearTimeout(timer);
+  }, [fetchJobs]);
 
   const handleSave = (jobId) => {
     if (savedJobs.includes(jobId)) {
@@ -135,11 +63,19 @@ export default function JobsPage() {
     }
   };
 
-  const handleApply = (jobId) => {
-    if (!appliedJobs.includes(jobId)) {
+  const handleApply = async (jobId) => {
+    if (appliedJobs.includes(jobId)) return;
+    try {
+      await api.applications.create({
+        job_id: String(jobId),
+        user_name: "Pengguna KerjaAI",
+        user_email: "user@kerjaai.id",
+      });
       setAppliedJobs([...appliedJobs, jobId]);
       toast.success("Lamaran berhasil dikirim!");
       setSelectedJob(null);
+    } catch (err) {
+      toast.error(err.message || "Gagal mengirim lamaran");
     }
   };
 
@@ -197,7 +133,7 @@ export default function JobsPage() {
 
         <div className="flex items-center justify-between gap-2 text-sm text-muted-foreground">
           <div className="flex items-center gap-2">
-            <span className="font-medium text-foreground">{filteredJobs.length}</span> lowongan ditemukan
+            <span className="font-medium text-foreground">{loading ? "..." : jobs.length}</span> lowongan ditemukan
             {regionFilter !== "all" && (
               <Badge variant="secondary" className="gap-1">
                 {regionFilter}
@@ -218,7 +154,7 @@ export default function JobsPage() {
 
       {/* Job Grid */}
       <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-5">
-        {filteredJobs.map((job) => (
+        {jobs.map((job) => (
           <Card
             key={job.id}
             className="group h-full flex flex-col border-border/50 hover:border-accent/30 hover:shadow-card-hover transition-all duration-300 cursor-pointer"
@@ -286,7 +222,7 @@ export default function JobsPage() {
         ))}
       </div>
 
-      {filteredJobs.length === 0 && (
+      {!loading && jobs.length === 0 && (
         <div className="text-center py-16">
           <div className="w-16 h-16 rounded-2xl bg-muted flex items-center justify-center mx-auto mb-4">
             <Search className="w-7 h-7 text-muted-foreground" />
@@ -294,6 +230,9 @@ export default function JobsPage() {
           <h3 className="font-heading text-lg font-semibold text-foreground mb-2">Tidak ada hasil</h3>
           <p className="text-sm text-muted-foreground">Coba ubah filter pencarian Anda</p>
         </div>
+      )}
+      {loading && jobs.length === 0 && (
+        <div className="text-center py-16 text-muted-foreground text-sm">Memuat lowongan...</div>
       )}
 
       {/* Job Detail Dialog */}

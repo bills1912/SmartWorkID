@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -13,71 +13,23 @@ import {
   Award, BarChart3, Target, Heart, Sparkles,
 } from "lucide-react";
 import { toast } from "sonner";
+import { api } from "@/lib/api";
 
-const courses = [
-  {
-    id: 1, title: "Fullstack JavaScript Developer Path",
-    provider: "Dicoding Indonesia", category: "web", level: "Intermediate",
-    duration: "120 jam", students: 15420, rating: 4.9, price: "Rp 299.000",
-    progress: 45, enrolled: true, modules: 12, completed: 5,
-    description: "Kuasai JavaScript dari dasar hingga fullstack development dengan React dan Node.js.",
-    skills: ["JavaScript", "React", "Node.js", "MongoDB"],
-    image: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=400&h=250&fit=crop",
-  },
-  {
-    id: 2, title: "Data Science & Machine Learning",
-    provider: "Coursera", category: "data", level: "Advanced",
-    duration: "80 jam", students: 23100, rating: 4.8, price: "Rp 499.000",
-    progress: 0, enrolled: false, modules: 10, completed: 0,
-    description: "Pelajari data science dan machine learning dari nol hingga mahir.",
-    skills: ["Python", "TensorFlow", "Statistics", "SQL"],
-    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=250&fit=crop",
-  },
-  {
-    id: 3, title: "Product Management Fundamentals",
-    provider: "LinkedIn Learning", category: "business", level: "Beginner",
-    duration: "40 jam", students: 8930, rating: 4.7, price: "Rp 199.000",
-    progress: 0, enrolled: false, modules: 8, completed: 0,
-    description: "Fondasi product management untuk memulai karir sebagai PM.",
-    skills: ["Agile", "Analytics", "Strategy", "UX"],
-    image: "https://images.pexels.com/photos/7654403/pexels-photo-7654403.jpeg?w=400&h=250&fit=crop",
-  },
-  {
-    id: 4, title: "UI/UX Design Masterclass",
-    provider: "Udemy", category: "design", level: "Intermediate",
-    duration: "60 jam", students: 12500, rating: 4.8, price: "Rp 349.000",
-    progress: 78, enrolled: true, modules: 15, completed: 12,
-    description: "Kuasai desain UI/UX dari teori hingga praktik dengan Figma.",
-    skills: ["Figma", "Design System", "Prototyping", "User Research"],
-    image: "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=400&h=250&fit=crop",
-  },
-  {
-    id: 5, title: "Cloud Computing with AWS",
-    provider: "AWS Academy", category: "cloud", level: "Intermediate",
-    duration: "50 jam", students: 6780, rating: 4.6, price: "Rp 399.000",
-    progress: 0, enrolled: false, modules: 9, completed: 0,
-    description: "Belajar cloud computing dan persiapan sertifikasi AWS.",
-    skills: ["AWS", "Docker", "Kubernetes", "Terraform"],
-    image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=400&h=250&fit=crop",
-  },
-  {
-    id: 6, title: "Digital Marketing Strategy",
-    provider: "Google", category: "business", level: "Beginner",
-    duration: "35 jam", students: 18200, rating: 4.7, price: "Gratis",
-    progress: 20, enrolled: true, modules: 7, completed: 1,
-    description: "Strategi digital marketing dari Google untuk pemula.",
-    skills: ["SEO", "Google Ads", "Analytics", "Content"],
-    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=250&fit=crop",
-  },
-];
 
 export default function TrainingPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [activeTab, setActiveTab] = useState("explore");
-  const [enrolledCourses, setEnrolledCourses] = useState(
-    courses.filter((c) => c.enrolled).map((c) => c.id)
-  );
+  const [allCourses, setAllCourses] = useState([]);
+  const [enrolledCourses, setEnrolledCourses] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    api.courses.list().then((data) => {
+      setAllCourses(data);
+      setEnrolledCourses(data.filter((c) => c.enrolled).map((c) => c.id));
+    }).catch(() => {}).finally(() => setLoading(false));
+  }, []);
 
   const handleEnroll = (courseId) => {
     if (!enrolledCourses.includes(courseId)) {
@@ -86,18 +38,18 @@ export default function TrainingPage() {
     }
   };
 
-  const filteredCourses = courses.filter((c) => {
+  const filteredCourses = allCourses.filter((c) => {
     const matchSearch =
       !searchQuery ||
       c.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      c.skills.some((s) => s.toLowerCase().includes(searchQuery.toLowerCase()));
+      (c.skills || []).some((s) => s.toLowerCase().includes(searchQuery.toLowerCase()));
     const matchCategory = categoryFilter === "all" || c.category === categoryFilter;
     return matchSearch && matchCategory;
   });
 
-  const myCourses = courses.filter((c) => enrolledCourses.includes(c.id));
+  const myCourses = allCourses.filter((c) => enrolledCourses.includes(c.id));
   const totalProgress = myCourses.length
-    ? Math.round(myCourses.reduce((sum, c) => sum + c.progress, 0) / myCourses.length)
+    ? Math.round(myCourses.reduce((sum, c) => sum + (c.progress || 0), 0) / myCourses.length)
     : 0;
 
   return (
