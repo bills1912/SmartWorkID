@@ -28,7 +28,7 @@ export const Footer = () => {
   };
 
   return (
-    <footer className="bg-foreground text-background">
+    <footer className="bg-[hsl(215,25%,6%)] text-slate-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Main Footer */}
         <div className="py-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
@@ -38,16 +38,16 @@ export const Footer = () => {
               <div className="w-9 h-9 rounded-lg bg-accent flex items-center justify-center">
                 <Briefcase className="w-5 h-5 text-accent-foreground" />
               </div>
-              <span className="font-heading text-lg font-bold text-background">
+              <span className="font-heading text-lg font-bold text-white">
                 KerjaAI
               </span>
             </div>
-            <p className="text-background/60 text-sm leading-relaxed max-w-sm mb-6">
+            <p className="text-white/60 text-sm leading-relaxed max-w-sm mb-6">
               Platform digitalisasi penciptaan lapangan kerja berbasis kecerdasan
               artifisial. Menghubungkan talenta terbaik Indonesia dengan peluang
               karir yang tepat.
             </p>
-            <div className="flex flex-col gap-2 text-sm text-background/50">
+            <div className="flex flex-col gap-2 text-sm text-white/50">
               <span className="flex items-center gap-2">
                 <Mail className="w-4 h-4" /> hello@kerjaai.id
               </span>
@@ -63,7 +63,7 @@ export const Footer = () => {
           {/* Links */}
           {Object.entries(footerLinks).map(([title, links]) => (
             <div key={title}>
-              <h4 className="font-heading font-semibold text-sm text-background mb-4">
+              <h4 className="font-heading font-semibold text-sm text-white mb-4">
                 {title}
               </h4>
               <ul className="flex flex-col gap-2.5">
@@ -71,7 +71,7 @@ export const Footer = () => {
                   <li key={link.label}>
                     <Link
                       to={link.href}
-                      className="text-sm text-background/50 hover:text-accent transition-colors duration-200"
+                      className="text-sm text-white/50 hover:text-accent transition-colors duration-200"
                     >
                       {link.label}
                     </Link>
@@ -82,15 +82,15 @@ export const Footer = () => {
           ))}
         </div>
 
-        <Separator className="bg-background/10" />
+        <Separator className="bg-white/10" />
 
         {/* Bottom Footer */}
         <div className="py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-background/40">
+          <p className="text-xs text-white/40">
             &copy; 2026 KerjaAI. Seluruh hak cipta dilindungi.
           </p>
           <div className="flex items-center gap-4">
-            <span className="text-xs text-background/40">
+            <span className="text-xs text-white/40">
               Dibuat dengan teknologi AI Indonesia
             </span>
           </div>
