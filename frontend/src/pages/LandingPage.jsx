@@ -818,10 +818,10 @@ export default function LandingPage() {
                 <div className="absolute bottom-0 left-0 w-48 h-48 rounded-full bg-primary-glow/10 blur-[60px]" />
               </div>
               <div className="relative z-10">
-                <h2 className="font-heading text-3xl sm:text-4xl font-bold text-primary-foreground mb-4">
+                <h2 className="font-heading text-3xl sm:text-4xl font-bold text-white mb-4">
                   Siap Memulai Perjalanan Karir Anda?
                 </h2>
-                <p className="text-base text-primary-foreground/70 max-w-xl mx-auto mb-8">
+                <p className="text-base text-white/70 max-w-xl mx-auto mb-8">
                   Bergabung dengan 200.000+ pencari kerja dan temukan peluang karir terbaik dengan teknologi AI
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -834,7 +834,7 @@ export default function LandingPage() {
                   </Button>
                   <Button
                     size="xl"
-                    className="bg-primary-foreground/10 text-primary-foreground border border-primary-foreground/20 hover:bg-primary-foreground/20 transition-colors duration-200"
+                    className="bg-white/10 text-white border border-white/20 hover:bg-white/20 transition-colors duration-200"
                     asChild
                   >
                     <Link to="/dashboard">Lihat Demo</Link>
